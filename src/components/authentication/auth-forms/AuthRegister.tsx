@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -38,21 +38,17 @@ import { StringColorProps } from 'types';
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { register } from 'module';
+import { RegisterRequest } from '../../../../package/api/Authentication/Register';
+import { apiClientFetch } from '../../../../package/api/api-fetch';
 
 // ===========================|| JWT - REGISTER ||=========================== //
 
 const JWTRegister = ({ ...others }) => {
   const theme = useTheme();
-  const scriptedRef = useScriptRef();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = React.useState(false);
-  const [checked, setChecked] = React.useState(true);
-  const [strength, setStrength] = React.useState(0);
-  const [level, setLevel] = React.useState<StringColorProps>();
-
-  const { register } = useAuth();
-
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -60,16 +56,6 @@ const JWTRegister = ({ ...others }) => {
   const handleMouseDownPassword = (event: React.SyntheticEvent) => {
     event.preventDefault();
   };
-
-  const changePassword = (value: string) => {
-    const temp = strengthIndicator(value);
-    setStrength(temp);
-    setLevel(strengthColor(temp));
-  };
-
-  useEffect(() => {
-    changePassword('123456');
-  }, []);
 
   return (
     <>
@@ -85,43 +71,40 @@ const JWTRegister = ({ ...others }) => {
         initialValues={{
           email: '',
           password: '',
+          rePassword: '',
           firstName: '',
           lastName: '',
+          location: '',
+          nickName: '',
+          phoneNumber: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          password: Yup.string().max(255).required('Password is required'),
+          firstName: Yup.string().max(255).required('FirstName is required'),
+          lastName: Yup.string().max(255).required('LastName is required'),
+          nickName: Yup.string().max(255).required('NickName is required'),
+          location: Yup.string().max(255).required('Location is required'),
+          phoneNumber: Yup.string().max(255).required('Phone Number is required'),
+          rePassword: Yup.string()
+            .oneOf([Yup.ref('password')], 'Passwords must match')
+            .required('Please re-type password')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            await register(values.email, values.password, values.firstName, values.lastName);
-            if (scriptedRef.current) {
-              setStatus({ success: true });
-              setSubmitting(false);
-              dispatch(
-                openSnackbar({
-                  open: true,
-                  message: 'Your registration has been successfully completed.',
-                  variant: 'alert',
-                  alert: {
-                    color: 'success'
-                  },
-                  close: false
-                })
-              );
-
-              setTimeout(() => {
-                router.push('/login');
-              }, 1500);
+            const params: RegisterRequest = { fullName: values.firstName + values.lastName, ...values };
+            const data = await apiClientFetch("register", "user", params)
+            if (data.error) {
+              throw new Error(data.error);
             }
+            setStatus({ success: true });
+            window.location.href = '/user/login';
+            setSubmitting(false);
           } catch (err: any) {
-            console.error(err);
-            if (scriptedRef.current) {
-              setStatus({ success: false });
-              setErrors({ submit: err.message });
-              setSubmitting(false);
-            }
+            setStatus({ success: false });
+            setErrors({ submit: err.message });
+            setSubmitting(false);
           }
         }}
       >
@@ -129,34 +112,84 @@ const JWTRegister = ({ ...others }) => {
           <form noValidate onSubmit={handleSubmit} {...others}>
             <Grid container spacing={{ xs: 0, sm: 2 }}>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="First Name"
-                  margin="normal"
-                  name="firstName"
-                  type="text"
-                  value={values.firstName}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  sx={{ ...theme.typography.customInput }}
-                />
+                <FormControl fullWidth error={Boolean(touched.firstName && errors.firstName)} sx={{ ...theme.typography.customInput }}>
+                  <InputLabel htmlFor="outlined-adornment-firstName-register">First Name</InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-firstName-register"
+                    type="text"
+                    value={values.firstName}
+                    name="firstName"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    inputProps={{}}
+                  />
+                  {touched.firstName && errors.firstName && (
+                    <FormHelperText error id="standard-weight-helper-text--register">
+                      {errors.firstName}
+                    </FormHelperText>
+                  )}
+                </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Last Name"
-                  margin="normal"
-                  name="lastName"
-                  type="text"
-                  value={values.lastName}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  sx={{ ...theme.typography.customInput }}
-                />
+                <FormControl fullWidth error={Boolean(touched.lastName && errors.lastName)} sx={{ ...theme.typography.customInput }}>
+                  <InputLabel htmlFor="outlined-adornment-lastName-register">Last Name</InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-lastName-register"
+                    type="text"
+                    value={values.lastName}
+                    name="lastName"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    inputProps={{}}
+                  />
+                  {touched.lastName && errors.lastName && (
+                    <FormHelperText error id="standard-weight-helper-text--register">
+                      {errors.lastName}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth error={Boolean(touched.nickName && errors.nickName)} sx={{ ...theme.typography.customInput }}>
+                  <InputLabel htmlFor="outlined-adornment-nickName-register">NickName</InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-nickName-register"
+                    type="text"
+                    value={values.nickName}
+                    name="nickName"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    inputProps={{}}
+                  />
+                  {touched.nickName && errors.nickName && (
+                    <FormHelperText error id="standard-weight-helper-text--register">
+                      {errors.nickName}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth error={Boolean(touched.phoneNumber && errors.phoneNumber)} sx={{ ...theme.typography.customInput }}>
+                  <InputLabel htmlFor="outlined-adornment-phoneNumber-register">Phone Number</InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-phoneNumber-register"
+                    type="text"
+                    value={values.phoneNumber}
+                    name="phoneNumber"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    inputProps={{}}
+                  />
+                  {touched.phoneNumber && errors.phoneNumber && (
+                    <FormHelperText error id="standard-weight-helper-text--register">
+                      {errors.phoneNumber}
+                    </FormHelperText>
+                  )}
+                </FormControl>
               </Grid>
             </Grid>
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-email-register">Email Address / Username</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-email-register">Email Address</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-email-register"
                 type="email"
@@ -184,7 +217,6 @@ const JWTRegister = ({ ...others }) => {
                 onBlur={handleBlur}
                 onChange={(e) => {
                   handleChange(e);
-                  changePassword(e.target.value);
                 }}
                 endAdornment={
                   <InputAdornment position="end">
@@ -208,40 +240,56 @@ const JWTRegister = ({ ...others }) => {
               )}
             </FormControl>
 
-            {strength !== 0 && (
-              <FormControl fullWidth>
-                <Box sx={{ mb: 2 }}>
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item>
-                      <Box sx={{ bgcolor: level?.color, width: 85, height: 8, borderRadius: '7px' }} />
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="subtitle1" fontSize="0.75rem">
-                        {level?.label}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </Box>
-              </FormControl>
-            )}
-
-            <Grid container alignItems="center" justifyContent="space-between">
-              <Grid item>
-                <FormControlLabel
-                  control={
-                    <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
-                  }
-                  label={
-                    <Typography variant="subtitle1">
-                      Agree with &nbsp;
-                      <Typography variant="subtitle1" component={Link} href="/">
-                        Terms & Condition.
-                      </Typography>
-                    </Typography>
-                  }
-                />
-              </Grid>
-            </Grid>
+            <FormControl fullWidth error={Boolean(touched.rePassword && errors.rePassword)} sx={{ ...theme.typography.customInput }}>
+              <InputLabel htmlFor="outlined-adornment-rePassword-register">Confirm Password</InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-rePassword-register"
+                type={showPassword ? 'text' : 'password'}
+                value={values.rePassword}
+                name="rePassword"
+                label="Confirm Password"
+                onBlur={handleBlur}
+                onChange={(e) => {
+                  handleChange(e);
+                }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                      size="large"
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                inputProps={{}}
+              />
+              {touched.rePassword && errors.rePassword && (
+                <FormHelperText error id="standard-weight-helper-text-password-register">
+                  {errors.rePassword}
+                </FormHelperText>
+              )}
+            </FormControl>
+            <FormControl fullWidth error={Boolean(touched.location && errors.location)} sx={{ ...theme.typography.customInput }}>
+              <InputLabel htmlFor="outlined-adornment-location-register">Address</InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-location-register"
+                type="string"
+                value={values.location}
+                name="location"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                inputProps={{}}
+              />
+              {touched.location && errors.location && (
+                <FormHelperText error id="standard-weight-helper-text--register">
+                  {errors.location}
+                </FormHelperText>
+              )}
+            </FormControl>
             {errors.submit && (
               <Box sx={{ mt: 3 }}>
                 <FormHelperText error>{errors.submit}</FormHelperText>

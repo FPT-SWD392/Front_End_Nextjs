@@ -5,14 +5,13 @@
 import { Products as ProductsTypo } from 'types/e-commerce';
 import Grid from '@mui/material/Grid';
 import ProductCard from 'ui-component/cards/ProductCard';
-import { products } from 'api/products';
-import { GetArtListResponse } from '../../package/api/Art/GetArtList';
+import { ArtWork } from '../../package/api/Art/GetArtList';
 // =============================|| LANDING MAIN ||============================= //
 
-const Landing = ({ artList }: { artList: GetArtListResponse[] }) => {
+const Landing = ({ artList }: { artList: ArtWork[] }) => {
   return (
     <Grid container spacing={3}>
-      {artList.map((product: GetArtListResponse, index) => (
+      {artList.map((product: ArtWork, index) => (
         <Grid key={index} item xs={2.4}>
           <ProductCard
             href={`/user/product/product-details/${product.artId}`}

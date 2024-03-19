@@ -22,7 +22,6 @@ import useAuth from 'hooks/useAuth';
 
 const Register = () => {
   const downMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-  const { isLoggedIn } = useAuth();
 
   return (
     <AuthWrapper1>
@@ -44,9 +43,6 @@ const Register = () => {
                           <Typography color="secondary.main" gutterBottom variant={downMD ? 'h3' : 'h2'}>
                             Sign up
                           </Typography>
-                          <Typography variant="caption" fontSize="16px" textAlign={{ xs: 'center', md: 'inherit' }}>
-                            Enter your credentials to continue
-                          </Typography>
                         </Stack>
                       </Grid>
                     </Grid>
@@ -61,7 +57,7 @@ const Register = () => {
                     <Grid item container direction="column" alignItems="center" xs={12}>
                       <Typography
                         component={Link}
-                        href={isLoggedIn ? '/pages/authentication/auth3/login' : '/login'}
+                        href={'/user/login'}
                         variant="subtitle1"
                         sx={{ textDecoration: 'none' }}
                       >

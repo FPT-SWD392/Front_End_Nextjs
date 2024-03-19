@@ -7,5 +7,5 @@ import { GetArtList } from '../../../../package/api/Art/GetArtList';
 export default async function UserHomePage() {
   const data = await GetArtList({ page: 1 });
 
-  return <Landing artList={data} />;
+  return <Landing artList={data.artworkPreviews} />;
 }

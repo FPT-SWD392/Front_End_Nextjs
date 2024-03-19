@@ -19,12 +19,9 @@ export interface RegisterResponse {
 
 export const Register = async (params: RegisterRequest): Promise<RegisterResponse> => {
   try {
-    const res = await apiServerFetch('/api/Register/Register', 'POST', params);
-    if (res.status === 'error') {
-      throw new Error('');
-    }
+    const res = await apiServerFetch('/api/Authentication/Register', 'PUT', params);
     return res;
   } catch (error: any) {
-    return errorSystem('Đăng kí', {});
+    return errorSystem('Đăng kí thất bại', {});
   }
 };

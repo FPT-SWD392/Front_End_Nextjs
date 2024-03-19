@@ -20,7 +20,6 @@ import AuthLogin from 'components/authentication/auth-forms/AuthLogin';
 // ================================|| AUTH3 - LOGIN ||================================ //
 
 const Login = () => {
-  const { isLoggedIn } = useAuth();
   const downMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
 
   return (
@@ -60,7 +59,7 @@ const Login = () => {
                     <Grid item container direction="column" alignItems="center" xs={12}>
                       <Typography
                         component={Link}
-                        href={isLoggedIn ? '/pages/authentication/auth3/register' : '/register'}
+                        href={'/user/register'}
                         variant="subtitle1"
                         sx={{ textDecoration: 'none' }}
                       >

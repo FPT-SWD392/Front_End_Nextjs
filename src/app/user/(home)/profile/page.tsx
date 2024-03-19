@@ -1,4 +1,3 @@
-import { products } from 'api/products';
 import Profile2 from 'views/apps/user/account-profile/profile2';
 import { Products as ProductsTypo } from 'types/e-commerce';
 import Grid from '@mui/material/Grid';

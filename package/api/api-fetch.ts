@@ -7,7 +7,7 @@ export const apiClientFetch = async (path: string, role: 'admin' | 'user', body:
   return await res.json();
 };
 
-export const apiServerFetch = async (url: string, method: 'GET' | 'POST', body?: any, accessToken?: string): Promise<any> => {
+export const apiServerFetch = async (url: string, method: 'GET' | 'POST' | 'PUT', body?: any, accessToken?: string): Promise<any> => {
   let headers: any = {
     'Content-type': 'application/json'
   };
@@ -27,7 +27,11 @@ export const apiServerFetch = async (url: string, method: 'GET' | 'POST', body?:
   if (res.status !== 200) {
     throw new Error('Backend error');
   }
-  return await res.json();
+  let response = {};
+  try {
+    response = await res.json();
+  } catch (error: any) {}
+  return response;
 };
 
 export const apiServerSubmitForm = async (url: string, method: 'POST', body?: any, accessToken?: string): Promise<any> => {
