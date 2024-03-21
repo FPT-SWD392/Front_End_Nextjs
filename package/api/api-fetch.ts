@@ -25,6 +25,7 @@ export const apiServerFetch = async (url: string, method: 'GET' | 'POST' | 'PUT'
     ...newBody
   });
   if (res.status !== 200) {
+    console.log(res)
     throw new Error('Backend error');
   }
   let response = {};
@@ -53,6 +54,7 @@ export const apiServerSubmitForm = async (url: string, method: 'POST', body?: an
     ...newBody
   });
   if (res.status !== 200) {
+    console.log(res)
     throw new Error('Backend error');
   }
   return await res.json();

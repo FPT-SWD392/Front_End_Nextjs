@@ -3,116 +3,122 @@
 import { useEffect, useState } from 'react';
 
 // material-ui
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import RadioGroup from '@mui/material/RadioGroup';
-import Radio from '@mui/material/Radio';
 import Stack from '@mui/material/Stack';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 // third-party
-import currency from 'currency.js';
 
 // project imports
-import OrderSummary from './OrderSummary';
-import AddressCard from './AddressCard';
 import PaymentSelect from './PaymentSelect';
-import ColorOptions from '../ColorOptions';
 import PaymentOptions from './PaymentOptions';
-import PaymentCard from './PaymentCard';
-import AddPaymentCard from './AddPaymentCard';
-import OrderComplete from './OrderComplete';
-import SubCard from 'ui-component/cards/SubCard';
-import Avatar from 'ui-component/extended/Avatar';
 
-import { dispatch } from 'store';
 import { gridSpacing } from 'store/constant';
-import { openSnackbar } from 'store/slices/snackbar';
 
 // types
-import { CartCheckoutStateProps } from 'types/cart';
 import { PaymentOptionsProps, Products } from 'types/e-commerce';
 
 // assets
-import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
-import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import { setPaymentCard, setPaymentMethod } from 'store/slices/cart';
-
-const prodImage = '/assets/images/e-commerce';
-
-// product color select
-function getColor(color: string) {
-  return ColorOptions.filter((item) => item.value === color);
-}
+import { GetCurrentUserResponse } from '../../../../../package/api/User/GetAllInfoAboutUser';
+import AnimateButton from 'ui-component/extended/AnimateButton';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { enqueueSnackbar } from 'notistack';
+import { apiClientFetch } from '../../../../../package/api/api-fetch';
+import TextField from '@mui/material/TextField';
+import OrderSummary from './OrderSummary';
+import { createPaymentUrl } from '../../../../../package/vnpay';
+import OrderComplete from './OrderComplete';
+import { AddAccountBalanceRequest } from '../../../../../package/api/User/AddAccountBalance';
 
 // ==============================|| CHECKOUT PAYMENT - MAIN ||============================== //
 
 interface PaymentProps {
-  product: Products;
-  onBack: () => void;
+  user: GetCurrentUserResponse;
 }
 
-const Payment = ({ product, onBack }: PaymentProps) => {
-  // const [type, setType] = useState(checkout.payment.type);
-  // const [payment, setPayment] = useState(checkout.payment.method);
-  // const [rows, setRows] = useState(checkout.products);
-  // const [cards, setCards] = useState(checkout.payment.card);
-
-  const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
-    setOpen(true);
+const Payment = ({ user }: PaymentProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [payment, setPayment] = useState('');
+  const [openSuccess, setOpenSuccess] = useState(false);
+  const [money, setMoney] = useState(0);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const addAccountBalance = async (params: AddAccountBalanceRequest) => {
+    try {
+      const data = await apiClientFetch('add-account-balance', 'user', params);
+      console.log(data);
+      if (data.error) {
+        throw new Error('');
+      }
+    } catch (error: any) {
+      enqueueSnackbar('Giao dịch thất bại', {
+        variant: 'error'
+      });
+    }
   };
-
-  const handleClose = () => {
-    setOpen(false);
+  useEffect(() => {
+    const vnp_TransactionStatus = new URLSearchParams(searchParams).get('vnp_TransactionStatus');
+    const vnp_Amount = new URLSearchParams(searchParams).get('vnp_Amount');
+    if (vnp_TransactionStatus) {
+      if (vnp_TransactionStatus === '00') {
+        if (vnp_Amount) {
+          addAccountBalance({ amount: +vnp_Amount / 100, isSuccess: true, transactionType: 0 });
+        }
+        setOpenSuccess(true);
+      } else {
+        if (vnp_Amount) {
+          addAccountBalance({ amount: +vnp_Amount / 100, isSuccess: false, transactionType: 0 });
+        }
+        enqueueSnackbar('Giao dịch thất bại', {
+          variant: 'error'
+        });
+        window.location.href = '/user/profile?target=history';
+      }
+    }
+  }, [searchParams]);
+  const handleClick = async () => {
+    try {
+      setIsLoading(true);
+      if (money < 10000) {
+        throw new Error('Số tiền nạp phải lớn hơn 10,000đ');
+      }
+      router.push(createPaymentUrl(money, `http://localhost:3000` + pathname));
+    } catch (error: any) {
+      enqueueSnackbar(error.message, {
+        variant: 'error'
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  const [complete, setComplete] = useState(false);
-
-  // useEffect(() => {
-  //   setRows(checkout.products);
-  // }, [checkout.products]);
-
-  // const cardHandler = (card: string) => {
-  //   if (payment === 'card') {
-  //     setCards(card);
-  //     dispatch(setPaymentCard(card));
-  //   }
-  // };
-
-  // const handlePaymentMethod = (value: string) => {
-  //   setPayment(value);
-  //   dispatch(setPaymentMethod(value));
-  // };
-
-  const completeHandler = () => {
-    setComplete(true);
-  };
-
   return (
     <Grid container spacing={gridSpacing}>
-      <Grid item xs={12}>
+      <Grid item xs={6}>
         <Grid container spacing={gridSpacing}>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <Typography variant="subtitle1">Payment Options</Typography>
           </Grid>
-          <Grid item xs={6}>
-            <Typography variant="subtitle1">Items</Typography>
+          <Grid item xs={12}>
+            <TextField
+              type="number"
+              fullWidth
+              label="Balance"
+              value={money}
+              onChange={(e) => {
+                setMoney(+e.target.value);
+              }}
+            />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <FormControl>
               <RadioGroup
                 aria-label="delivery-options"
-                // value={payment}
-                // onChange={(e) => handlePaymentMethod(e.target.value)}
+                value={payment}
+                onChange={(e) => setPayment(e.target.value)}
                 name="delivery-options"
               >
                 <Grid container spacing={gridSpacing} alignItems="center">
@@ -125,47 +131,28 @@ const Payment = ({ product, onBack }: PaymentProps) => {
               </RadioGroup>
             </FormControl>
           </Grid>
-          <Grid item xs={6}>
-            <Stack spacing={gridSpacing}>
-              <TableContainer>
-                <Table sx={{ minWidth: 280, minHeight: 96 }} aria-label="simple table">
-                  <TableBody>
-                    <TableRow sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
-                      <TableCell component="th" scope="row">
-                        <Avatar
-                          size="md"
-                          variant="rounded"
-                          alt="product images"
-                          src={product.image ? `${prodImage}/${product.image}` : ''}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        {product.offerPrice && <Typography variant="subtitle1">{currency(product.offerPrice).format()}</Typography>}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <OrderSummary product={product} />
-            </Stack>
+        </Grid>
+      </Grid>
+      <Grid item xs={6}>
+        <Grid container spacing={gridSpacing}>
+          <Grid item xs={12}>
+            <Typography variant="subtitle1">Payment Options</Typography>
           </Grid>
           <Grid item xs={12}>
-            <Grid container spacing={3} alignItems="center" justifyContent="space-between">
-              <Grid item>
-                <Button variant="text" startIcon={<KeyboardBackspaceIcon />} onClick={onBack}>
-                  Back
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button variant="contained" onClick={completeHandler}>
-                  Complete Order
-                </Button>
-                <OrderComplete open={complete} />
-              </Grid>
-            </Grid>
+            <OrderSummary current={user.balance} adding={money} />
           </Grid>
         </Grid>
       </Grid>
+      <Grid item xs={12}>
+        <Stack direction="row">
+          <AnimateButton>
+            <LoadingButton variant="outlined" size="large" loading={isLoading} onClick={handleClick}>
+              Add Balance
+            </LoadingButton>
+          </AnimateButton>
+        </Stack>
+      </Grid>
+      <OrderComplete open={openSuccess} setOpen={setOpenSuccess} />
     </Grid>
   );
 };

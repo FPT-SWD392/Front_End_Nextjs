@@ -27,7 +27,6 @@ import { ThemeMode } from 'types/config';
 // assets
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import CreditCardTwoToneIcon from '@mui/icons-material/CreditCardTwoTone';
-import { products } from 'api/products';
 
 interface TabOptionProps {
   label: string;
@@ -61,7 +60,6 @@ function TabPanel({ children, value, index, ...other }: TabsProps) {
 // ==============================|| PRODUCT - CHECKOUT MAIN ||============================== //
 
 const Checkout = () => {
-  const product = products[1];
   const { mode, borderRadius } = useConfig();
 
   const [value, setValue] = useState(0);
@@ -158,21 +156,14 @@ const Checkout = () => {
         </Grid>
         <Grid item xs={12}>
           <TabPanel value={value} index={0}>
-            <Cart
+            {/* <Cart
               product={product}
               onNext={() => {
                 onNext(0);
               }}
-            />
+            /> */}
           </TabPanel>
-          <TabPanel value={value} index={1}>
-            <Payment
-              product={product}
-              onBack={() => {
-                onBack(1);
-              }}
-            />
-          </TabPanel>
+
         </Grid>
       </Grid>
     </MainCard>

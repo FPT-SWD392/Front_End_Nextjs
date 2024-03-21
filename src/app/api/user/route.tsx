@@ -6,6 +6,7 @@ import { errorSystem } from '../../../../package/api/api-fetch';
 import { UserManageProfile } from '../../../../package/api/User/UserManageProfile';
 import { UpdateProfilePassword } from '../../../../package/api/User/UpdateProfilePassword';
 import { Register } from '../../../../package/api/Authentication/Register';
+import { AddAccountBalance } from '../../../../package/api/User/AddAccountBalance';
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
@@ -36,6 +37,9 @@ const response = async (params: any, userToken: string, path: string) => {
         break;
       case 'update-password':
         res = await UpdateProfilePassword(params, userToken);
+        break;
+      case 'add-account-balance':
+        res = await AddAccountBalance(params, userToken);
         break;
       case 'logout':
         setUserToken('', cookies());

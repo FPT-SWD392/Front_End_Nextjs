@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 // material-ui
 import Button from '@mui/material/Button';
@@ -14,9 +14,8 @@ import Typography from '@mui/material/Typography';
 
 // project imports
 import UserProfile from 'components/users/account-profile/Profile2/UserProfile';
-import Billing from 'components/users/account-profile/Profile2/Billing';
-import Payment from 'components/users/account-profile/Profile2/Payment';
 import ChangePassword from 'components/users/account-profile/Profile2/ChangePassword';
+import Payment from 'components/application/e-commerce/Checkout/Payment';
 import useConfig from 'hooks/useConfig';
 import MainCard from 'ui-component/cards/MainCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
@@ -24,15 +23,17 @@ import { gridSpacing } from 'store/constant';
 
 // assets
 import PersonOutlineTwoToneIcon from '@mui/icons-material/PersonOutlineTwoTone';
-import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
-import CreditCardTwoToneIcon from '@mui/icons-material/CreditCardTwoTone';
+import MonetizationOnTwoToneIcon from '@mui/icons-material/MonetizationOnTwoTone';
 import VpnKeyTwoToneIcon from '@mui/icons-material/VpnKeyTwoTone';
-
+import AccountBalanceWalletTwoToneIcon from '@mui/icons-material/AccountBalanceWalletTwoTone';
 // types
 import { TabsProps } from 'types';
 import { ThemeMode } from 'types/config';
 import { CreateArtWork } from '../../../../../package/api/Art/CreateArtWork';
 import { GetCurrentUserResponse } from '../../../../../package/api/User/GetAllInfoAboutUser';
+import { useSearchParams } from 'next/navigation';
+import UserAddingBalanceList from 'views/apps/customer/user-adding-balance-list';
+import { TransactionHistory } from '../../../../../package/api/TransactionHistory/GetDepositeTransactionThisUser';
 
 // tabs
 function TabPanel({ children, value, index, ...other }: TabsProps) {
@@ -61,31 +62,41 @@ const tabsOption = [
     label: 'Change Password',
     icon: <VpnKeyTwoToneIcon />,
     caption: 'Update Profile Security'
+  },
+  {
+    label: 'Balance',
+    icon: <MonetizationOnTwoToneIcon />,
+    caption: 'Add Balance'
+  },
+  {
+    label: 'History',
+    icon: <AccountBalanceWalletTwoToneIcon />,
+    caption: 'Transaction History'
   }
 ];
 
 // ==============================|| PROFILE 2 ||============================== //
 
-
-const Profile2 = ({ user }: { user: GetCurrentUserResponse }) => {
+const Profile2 = ({ user, transactionHistory }: { user: GetCurrentUserResponse; transactionHistory: TransactionHistory[] }) => {
   const { mode, borderRadius } = useConfig();
   const [value, setValue] = React.useState<number>(0);
-
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const vnp_TransactionStatus = new URLSearchParams(searchParams).get('vnp_TransactionStatus');
+    if (vnp_TransactionStatus) {
+      setValue(2);
+    }
+    const target = new URLSearchParams(searchParams).get('target');
+    if (target) {
+      setValue(3);
+    }
+  }, [searchParams]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   return (
     <Grid container spacing={gridSpacing}>
-      {/* <Grid item xs={12}>
-        <form encType="multipart/form-data" method="POST" onSubmit={(e) => {
-          e.preventDefault()
-          CreateArtWork(e, accessToken)
-        }}>
-          <input type="file" />
-          <button type="submit">submit</button>
-        </form>
-      </Grid> */}
       <Grid item xs={12}>
         <MainCard title="Account Settings" content={false}>
           <Grid container spacing={gridSpacing}>
@@ -161,10 +172,16 @@ const Profile2 = ({ user }: { user: GetCurrentUserResponse }) => {
                 }}
               >
                 <TabPanel value={value} index={0}>
-                  <UserProfile user={user}/>
+                  <UserProfile user={user} />
                 </TabPanel>
                 <TabPanel value={value} index={1}>
                   <ChangePassword />
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                  <Payment user={user} />
+                </TabPanel>
+                <TabPanel value={value} index={3}>
+                  <UserAddingBalanceList transactionHistory={transactionHistory}/>
                 </TabPanel>
               </CardContent>
             </Grid>

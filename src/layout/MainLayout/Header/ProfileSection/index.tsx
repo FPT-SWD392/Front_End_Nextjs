@@ -166,6 +166,9 @@ const ProfileSection = ({ profileNavigation, user }: ProfileSectionProps) => {
                         <Typography sx={{ width: '100%', mb: 2 }} variant="subtitle2">
                           {user.email}
                         </Typography>
+                        <Typography sx={{ width: '100%', mb: 2 }} variant="subtitle1">
+                          Balance: <span style={{ color: 'green' }}>{user.balance}đ</span>
+                        </Typography>
                       </Stack>
                       <Divider />
                     </Box>

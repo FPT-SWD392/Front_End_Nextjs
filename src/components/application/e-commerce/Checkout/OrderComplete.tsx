@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { forwardRef } from 'react';
-import Link from 'next/link';
 
 // material-ui
 import { Theme } from '@mui/material/styles';
@@ -8,7 +7,6 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Zoom, { ZoomProps } from '@mui/material/Zoom';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -23,6 +21,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 
 // assets
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import { useRouter } from 'next/navigation';
 
 const chance = new Chance();
 
@@ -30,9 +29,9 @@ const Transition = forwardRef((props: ZoomProps, ref) => <Zoom ref={ref} {...pro
 
 // ==============================|| CHECKOUT CART - DISCOUNT COUPON CODE ||============================== //
 
-const OrderComplete = ({ open }: { open: boolean }) => {
+const OrderComplete = ({ open, setOpen }: { open: boolean; setOpen: (value: boolean) => void }) => {
   const downMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-
+  const router = useRouter();
   return (
     <Dialog
       open={open}
@@ -52,35 +51,22 @@ const OrderComplete = ({ open }: { open: boolean }) => {
           <PerfectScrollbar style={{ overflowX: 'hidden', height: 'calc(100vh - 100px)' }}>
             <Grid container direction="column" spacing={gridSpacing} alignItems="center" justifyContent="center" sx={{ my: 3 }}>
               <Grid item xs={12}>
-                <Typography variant={downMD ? 'h2' : 'h1'}>Thank you for order!</Typography>
+                <Typography variant={downMD ? 'h2' : 'h1'}>Order Success!</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Stack alignItems="center" spacing={2}>
-                  <Typography align="center" variant="h4" sx={{ fontWeight: 400, color: 'grey.500' }}>
-                    We will send a process notification, before it delivered.
-                  </Typography>
-                  <Typography variant="body1" align="center">
-                    Your order id:{' '}
-                    <Typography variant="subtitle1" component="span" color="primary">
-                      {chance.guid()}
-                    </Typography>
-                  </Typography>
-                </Stack>
-              </Grid>
-              <Grid item xs={12} sx={{ marginX: 50, marginY: 15 }}>
-              </Grid>
-              <Grid item xs={12} sm={9}>
-                <Stack alignItems="center" spacing={1}>
-                  <Typography variant="caption" align="center">
-                    If you have any query or questions regarding purchase items, then fell to get in contact us
-                  </Typography>
-                  <Typography variant="subtitle1" color="error" sx={{ cursor: 'pointer' }}>
-                    {chance.phone()}
-                  </Typography>
-                </Stack>
-              </Grid>
-              <Grid item xs={12}>
-                <Divider />
+                <Image
+                  alt=""
+                  src={'/assets/images/e-commerce/completed.png'}
+                  width={1920}
+                  height={1080}
+                  style={{
+                    marginLeft: 40,
+                    marginRight: 40,
+                    width: 600,
+                    height: 400,
+                    objectFit: 'cover'
+                  }}
+                />
               </Grid>
               <Grid item xs={12}>
                 <Grid
@@ -91,12 +77,13 @@ const OrderComplete = ({ open }: { open: boolean }) => {
                   justifyContent="space-between"
                 >
                   <Grid item>
-                    <Button component={Link} href="/" variant="text" startIcon={<KeyboardBackspaceIcon />}>
-                      Continue Shopping
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                    <Button component={Link} href="/apps/e-commerce/products" variant="contained" fullWidth>
+                    <Button
+                      onClick={() => {
+                        router.push('/user/profile?target=history');
+                      }}
+                      variant="contained"
+                      fullWidth
+                    >
                       View Your Order
                     </Button>
                   </Grid>

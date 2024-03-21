@@ -11,27 +11,31 @@ import currency from 'currency.js';
 
 // project imports
 import SubCard from 'ui-component/cards/SubCard';
+import { formatNumber } from '../../../../../package/util';
 
 // types
-import { Products } from 'types/e-commerce';
 
 // ==============================|| CHECKOUT CART - ORDER SUMMARY ||============================== //
 
-const OrderSummary = ({ product }: { product: Products }) => (
+const OrderSummary = ({ current, adding }: { current: number; adding: number }) => (
   <SubCard>
     <TableContainer>
       <Table sx={{ minWidth: 'auto' }} size="small" aria-label="simple table">
         <TableBody>
           <TableRow>
             <TableCell>
-              <Typography variant="subtitle1">Order Summary</Typography>
+              <Typography my={1}>Current Balance</Typography>
             </TableCell>
-            <TableCell />
+            <TableCell align="right">
+              <Typography>{formatNumber(current)}đ</Typography>
+            </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Sub Total</TableCell>
+            <TableCell>
+              <Typography my={1}>Adding Balance</Typography>
+            </TableCell>
             <TableCell align="right">
-              <Typography variant="subtitle1">{currency(product.offerPrice as number).format()}</Typography>
+              <Typography color={'green'}>{formatNumber(adding)}đ</Typography>
             </TableCell>
           </TableRow>
 
@@ -40,7 +44,9 @@ const OrderSummary = ({ product }: { product: Products }) => (
               <Typography variant="subtitle1">Total</Typography>
             </TableCell>
             <TableCell align="right" sx={{ borderBottom: 'none' }}>
-            <Typography variant="subtitle1">{currency(product.offerPrice as number).format()}</Typography>
+              <Typography variant="subtitle1" color={'green'}>
+                {formatNumber(current + adding)}đ
+              </Typography>
             </TableCell>
           </TableRow>
         </TableBody>

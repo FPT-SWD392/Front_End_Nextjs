@@ -28,18 +28,7 @@ const imgMain = '/assets/images/auth/img-a2-login.svg';
 
 // carousel items
 const items: AuthSliderProps[] = [
-  {
-    title: 'Components Based Design System',
-    description: 'Powerful and easy to use multipurpose theme'
-  },
-  {
-    title: 'Ready to use components',
-    description: 'Ready made component to apply directly'
-  },
-  {
-    title: 'Multiple dashboard and widgets',
-    description: '100+ widgets and customize controls'
-  }
+
 ];
 
 // ================================|| AUTH2 - LOGIN ||================================ //
@@ -80,30 +69,13 @@ const Login = () => {
                     <Grid item>
                       <Stack alignItems="center" justifyContent="center" spacing={1}>
                         <Typography color="secondary.main" gutterBottom variant={downMD ? 'h3' : 'h2'}>
-                          Hi, Welcome Back
+                          Hi, Welcome Admin
                         </Typography>
-                        <Typography variant="caption" fontSize="16px" textAlign={downMD ? 'center' : 'inherit'}>
-                          Enter your credentials to continue
-                        </Typography>
+               
                       </Stack>
                     </Grid>
                     <Grid item xs={12}>
                       <AuthLogin loginProp={2} />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid item container direction="column" alignItems="center" xs={12}>
-                        <Typography
-                          component={Link}
-                          href="/pages/authentication/auth2/register"
-                          variant="subtitle1"
-                          sx={{ textDecoration: 'none' }}
-                        >
-                          Don&apos;t have an account?
-                        </Typography>
-                      </Grid>
                     </Grid>
                   </Grid>
                 </AuthCardWrapper>

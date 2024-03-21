@@ -3,7 +3,6 @@ import { PaymentOptionsProps } from 'types/e-commerce';
 
 // assets
 const paypal = '/assets/images/e-commerce/paypal.png';
-const card = '/assets/images/e-commerce/card.png';
 
 // ==============================|| CHECKOUT - PAYMENT OPTIONS ||============================== //
 
@@ -19,18 +18,6 @@ const PaymentOptions: PaymentOptionsProps[] = [
       height: 16
     }
   },
-  {
-    id: 2,
-    value: 'momo',
-    title: 'Momo',
-    caption: 'We support Mastercard, Visa, Discover and Stripe.',
-    image: card,
-    size: {
-      width: 72,
-      height: 24
-    }
-  },
-
 ];
 
 export default PaymentOptions;

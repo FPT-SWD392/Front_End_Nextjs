@@ -3,7 +3,7 @@ import { apiServerFetch, errorSystem } from '../api-fetch';
 export interface GetCurrentUserRequest {}
 
 export interface GetCurrentUserResponse {
-  userId: 3;
+  userId: number;
   email: string;
   status: number;
   creatorId: string;

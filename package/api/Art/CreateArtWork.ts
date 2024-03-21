@@ -15,7 +15,6 @@ export const CreateArtWork = async (e: any, accessToken: string): Promise<Create
     if (res.status === 'error') {
       throw new Error('');
     }
-    console.log(res)
     return res;
   } catch (error: any) {
     return errorSystem('Tạo thất bại', {});

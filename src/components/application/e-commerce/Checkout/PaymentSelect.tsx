@@ -10,6 +10,7 @@ import SubCard from 'ui-component/cards/SubCard';
 
 // types
 import { PaymentOptionsProps } from 'types/e-commerce';
+import Image from 'next/image';
 
 // ==============================|| CHECKOUT PAYMENT - OPTIONS ||============================== //
 
@@ -25,7 +26,7 @@ const PaymentSelect = ({ item }: { item: PaymentOptionsProps }) => (
               <Typography variant="subtitle1">{item.title}</Typography>
               <Typography variant="caption">{item.caption}</Typography>
             </Stack>
-            <Box
+            {/* <Box
               sx={{
                 backgroundImage: `url(${item.image})`,
                 backgroundSize: 'contain',
@@ -33,7 +34,10 @@ const PaymentSelect = ({ item }: { item: PaymentOptionsProps }) => (
                 borderColor: 'error.light',
                 ...item.size
               }}
-            />
+            /> */}
+            <Image alt="" src={item.image} width={1920} height={1080} style={{
+              width: 40, objectFit: "contain", height: 20, objectPosition: "center"
+            }}/>
           </Stack>
         }
         sx={{

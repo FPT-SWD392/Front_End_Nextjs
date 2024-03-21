@@ -59,19 +59,9 @@ const Sidebar = () => {
     if (drawerOpen) drawerSX = { paddingLeft: '16px', paddingRight: '16px', marginTop: '0px' };
 
     return (
-      <>
-        {downMD ? (
-          <Box sx={drawerSX}>
-            <MenuList />
-            {isVerticalOpen && drawerContent}
-          </Box>
-        ) : (
-          <PerfectScrollbar style={{ height: 'calc(100vh - 88px)', ...drawerSX }}>
-            <MenuList />
-            {isVerticalOpen && drawerContent}
-          </PerfectScrollbar>
-        )}
-      </>
+      <PerfectScrollbar style={{ height: 'calc(100vh - 88px)', ...drawerSX }}>
+        <MenuList />
+      </PerfectScrollbar>
     );
   }, [downMD, drawerOpen, menuOrientation]);
 

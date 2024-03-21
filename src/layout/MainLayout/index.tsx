@@ -13,8 +13,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 // project imports
 import Header from './Header';
 import Sidebar from './Sidebar';
-import HorizontalBar from './HorizontalBar';
-import Customization from '../Customization';
 import MainContentStyled from './MainContentStyled';
 import Loader from 'ui-component/Loader';
 import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
@@ -23,7 +21,6 @@ import useConfig from 'hooks/useConfig';
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
 
 // types
-import { MenuOrientation } from 'types/config';
 
 interface Props {
   children: ReactNode;
@@ -47,10 +44,10 @@ const MainLayout: FC<Props> = ({ children }) => {
     downMD && handlerDrawerOpen(false);
   }, [downMD]);
 
-  const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downMD;
+  const isHorizontal = false;
 
   // horizontal menu-list bar : drawer
-  const menu = useMemo(() => (isHorizontal ? <HorizontalBar /> : <Sidebar />), [isHorizontal]);
+  const menu = useMemo(() => <Sidebar />, [isHorizontal]);
 
   if (menuMasterLoading) return <Loader />;
 
@@ -74,7 +71,6 @@ const MainLayout: FC<Props> = ({ children }) => {
           {children}
         </Container>
       </MainContentStyled>
-      <Customization />
     </Box>
   );
 };

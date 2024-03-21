@@ -38,7 +38,7 @@ export interface MainCardProps extends KeyedObject {
   elevation?: number;
   title?: React.ReactNode | string;
 }
-
+//@ts-ignore
 const MainCard = React.forwardRef(
   (
     {

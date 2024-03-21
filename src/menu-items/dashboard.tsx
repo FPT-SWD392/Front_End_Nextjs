@@ -21,21 +21,14 @@ const dashboard: NavItemType = {
   type: 'group',
   children: [
     {
-      id: 'default',
-      title: <FormattedMessage id="default" />,
-      type: 'item',
-      url: '/dashboard/default',
-      icon: icons.IconDashboard,
-      breadcrumbs: false
-    },
-    {
       id: 'analytics',
       title: <FormattedMessage id="analytics" />,
       type: 'item',
-      url: '/dashboard/analytics',
+      url: '/admin/dashboard/analytics',
       icon: icons.IconDeviceAnalytics,
       breadcrumbs: false
     }
+
   ]
 };
 

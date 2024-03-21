@@ -157,7 +157,6 @@ const SearchSection = ({ borderRadius = 2 }: SearchSectionProps) => {
       </Box>
       <Box sx={{ mx: 2 }}>
         <OutlinedInput
-          id="input-search-header"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Search"

@@ -1,16 +1,17 @@
 import Profile2 from 'views/apps/user/account-profile/profile2';
-import { Products as ProductsTypo } from 'types/e-commerce';
 import Grid from '@mui/material/Grid';
-import ProductCard from 'ui-component/cards/ProductCard';
 import { getUserToken } from '../../../../../package/cookies/token';
 import { cookies } from 'next/headers';
 import { GetCurrentUser } from '../../../../../package/api/User/GetAllInfoAboutUser';
+import { GetTransactionHistory } from '../../../../../package/api/TransactionHistory/GetDepositeTransactionThisUser';
 export default async function Page() {
-  const userToken = await getUserToken(cookies())
-  const user = await GetCurrentUser({}, userToken)
+  const userToken = await getUserToken(cookies());
+  const user = await GetCurrentUser({}, userToken);
+  const transactionHistory = await GetTransactionHistory({}, userToken);
+  console.log(transactionHistory)
   return (
     <>
-      <Profile2 user={user}/>
+      <Profile2 user={user} transactionHistory={transactionHistory}/>
       <Grid container spacing={3} mt={2}>
         {/* {products.map((product: ProductsTypo, index) => (
           <Grid key={index} item xs={2.4}>
