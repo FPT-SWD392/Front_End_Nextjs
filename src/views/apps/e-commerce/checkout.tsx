@@ -27,6 +27,8 @@ import { ThemeMode } from 'types/config';
 // assets
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import CreditCardTwoToneIcon from '@mui/icons-material/CreditCardTwoTone';
+import { ArtWork } from '../../../../package/api/Art/GetArtInfo';
+import { GetCurrentUserResponse } from '../../../../package/api/User/GetAllInfoAboutUser';
 
 interface TabOptionProps {
   label: string;
@@ -40,11 +42,6 @@ const tabsOption: TabOptionProps[] = [
     label: 'Checkout',
     icon: <ShoppingCartTwoToneIcon />,
     caption: 'Product Added'
-  },
-  {
-    label: 'Payment',
-    icon: <CreditCardTwoToneIcon />,
-    caption: 'Add & Update Card'
   }
 ];
 
@@ -59,21 +56,13 @@ function TabPanel({ children, value, index, ...other }: TabsProps) {
 
 // ==============================|| PRODUCT - CHECKOUT MAIN ||============================== //
 
-const Checkout = () => {
+const Checkout = ({ art, user }: { art: ArtWork; user: GetCurrentUserResponse }) => {
   const { mode, borderRadius } = useConfig();
 
   const [value, setValue] = useState(0);
 
   const handleChange = (newValue: number) => {
     setValue(newValue);
-  };
-
-  const onNext = (currentIndex: number) => {
-    setValue(currentIndex + 1);
-  };
-
-  const onBack = (currentIndex: number) => {
-    setValue(currentIndex - 1);
   };
 
   return (
@@ -156,14 +145,8 @@ const Checkout = () => {
         </Grid>
         <Grid item xs={12}>
           <TabPanel value={value} index={0}>
-            {/* <Cart
-              product={product}
-              onNext={() => {
-                onNext(0);
-              }}
-            /> */}
+            <Cart product={art} user={user} />
           </TabPanel>
-
         </Grid>
       </Grid>
     </MainCard>

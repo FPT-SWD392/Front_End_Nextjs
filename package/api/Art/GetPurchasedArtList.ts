@@ -1,6 +1,6 @@
 import { apiServerFetch, errorSystem } from '../api-fetch';
 
-export interface GetArtListRequest {
+export interface GetPurchasedArtListRequest {
   page: number;
 }
 
@@ -16,15 +16,15 @@ export interface ArtWork {
   averageRating: number;
   status: number;
 }
-export interface GetArtListResponse {
+export interface GetPurchasedArtListResponse {
   currentPage: number;
   pageCount: number;
   artworkPreviews: ArtWork[];
 }
 
-export const GetArtList = async (params: GetArtListRequest, accessToken: string): Promise<GetArtListResponse> => {
+export const GetPurchasedArtList = async (params: GetPurchasedArtListRequest, accessToken: string): Promise<GetPurchasedArtListResponse> => {
   try {
-    const res = await apiServerFetch(`/api/Art/GetArtList?page=${params.page}`, 'GET', undefined, accessToken);
+    const res = await apiServerFetch(`/api/Art/GetPurchasedArtList?page=${params.page}`, 'GET', undefined, accessToken);
     if (res.status === 'error') {
       throw new Error('');
     }

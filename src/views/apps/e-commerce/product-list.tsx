@@ -218,7 +218,7 @@ function EnhancedTableHead({
 
 // ==============================|| PRODUCT LIST ||============================== //
 
-const ProductList = () => {
+const   ProductList = () => {
   const theme = useTheme();
 
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');

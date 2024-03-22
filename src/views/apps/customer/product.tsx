@@ -74,7 +74,7 @@ const headCells: HeadCell[] = [
     id: 'id',
     numeric: true,
     label: 'ID',
-    align: 'center'
+    align: 'left'
   },
   {
     id: 'name',
@@ -83,29 +83,24 @@ const headCells: HeadCell[] = [
     align: 'left'
   },
   {
-    id: 'category',
+    id: 'tag',
     numeric: false,
-    label: 'Category',
+    label: 'Tag',
     align: 'left'
   },
   {
     id: 'price',
     numeric: true,
     label: 'Price',
-    align: 'right'
+    align: 'left'
   },
   {
     id: 'date',
     numeric: true,
     label: 'Date',
-    align: 'center'
+    align: 'left'
   },
-  {
-    id: 'qty',
-    numeric: true,
-    label: 'QTY',
-    align: 'right'
-  }
+  
 ];
 
 // ==============================|| TABLE HEADER TOOLBAR ||============================== //
@@ -154,17 +149,6 @@ function EnhancedTableHead({
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox" sx={{ pl: 3 }}>
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts'
-            }}
-          />
-        </TableCell>
         {numSelected > 0 && (
           <TableCell padding="none" colSpan={7}>
             <EnhancedTableToolbar numSelected={selected.length} />
@@ -192,11 +176,6 @@ function EnhancedTableHead({
               </TableSortLabel>
             </TableCell>
           ))}
-        {numSelected <= 0 && (
-          <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
-            <Typography variant="subtitle1">Action</Typography>
-          </TableCell>
-        )}
       </TableRow>
     </TableHead>
   );
@@ -204,7 +183,7 @@ function EnhancedTableHead({
 
 // ==============================|| PRODUCT LIST ||============================== //
 
-const ProductList = () => {
+const ProductList = ({accessToken} : {accessToken: string}) => {
   // show a right sidebar when clicked on new product
   const [open, setOpen] = React.useState(false);
   const handleClickOpenDialog = () => {
@@ -327,22 +306,7 @@ const ProductList = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-            <Tooltip title="Copy">
-              <IconButton size="large">
-                <FileCopyIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Print">
-              <IconButton size="large">
-                <PrintIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Filter">
-              <IconButton size="large">
-                <FilterListIcon />
-              </IconButton>
-            </Tooltip>
-
+ 
             {/* product add & dialog */}
             <Tooltip title="Add Product">
               <Fab
@@ -354,7 +318,7 @@ const ProductList = () => {
                 <AddIcon fontSize="small" />
               </Fab>
             </Tooltip>
-            <ProductAdd open={open} handleCloseDialog={handleCloseDialog} />
+            <ProductAdd open={open} handleCloseDialog={handleCloseDialog} accessToken={accessToken}/>
           </Grid>
         </Grid>
       </CardContent>
@@ -373,7 +337,6 @@ const ProductList = () => {
           />
           <TableBody>
             {stableSort(rows, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 /** Make sure no display bugs if row isn't an OrderData object */
                 if (typeof row === 'number') return null;

@@ -20,7 +20,7 @@ import { gridSpacing } from 'store/constant';
 
 // types
 import { TabsProps } from 'types';
-import { products } from 'api/products';
+import { GetArtInfoResponse } from '../../../../package/api/Art/GetArtInfo';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
   return (
@@ -45,51 +45,28 @@ function a11yProps(index: number) {
 
 type Props = {
   id: string;
+  art: GetArtInfoResponse
 };
 
-const ProductDetails = ({ id }: Props) => {
+const ProductDetails = ({ id, art }: Props) => {
   // product description tabs
   const [value, setValue] = useState(0);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  const product = products.find((e) => e.id === +id);
 
   return (
     <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing} maxWidth={'xl'}>
       <Grid item xs={8}>
         <MainCard>
-          {product && product?.id === Number(id) && (
+          {art && (
             <Grid container spacing={gridSpacing}>
               <Grid item xs={6}>
-                <ProductImages product={product} />
+                <ProductImages product={art} />
               </Grid>
               <Grid item xs={6}>
-                <ProductInfo product={product} />
-              </Grid>
-              <Grid item xs={12}>
-                <Tabs
-                  value={value}
-                  indicatorColor="primary"
-                  onChange={handleChange}
-                  aria-label="product description tabs example"
-                  sx={{ '& a > svg': { mb: '0px !important', mr: 1.25 } }}
-                  variant="scrollable"
-                >
-                  <Tab
-                    label={
-                      <Stack direction="row" alignItems="center">
-                        Reviews <Chip label={String(product.offerPrice?.toFixed(0))} size="small" chipcolor="secondary" sx={{ ml: 1.5 }} />
-                      </Stack>
-                    }
-                    {...a11yProps(0)}
-                  />
-                </Tabs>
-       
-                <TabPanel value={value} index={0}>
-                  <ProductReview product={product} />
-                </TabPanel>
+                <ProductInfo product={art} />
               </Grid>
             </Grid>
           )}

@@ -37,7 +37,6 @@ export const apiServerFetch = async (url: string, method: 'GET' | 'POST' | 'PUT'
 
 export const apiServerSubmitForm = async (url: string, method: 'POST', body?: any, accessToken?: string): Promise<any> => {
   let headers: any = {
-    'Content-type': 'multipart/form-data',
     accept: '*/*'
   };
   if (accessToken) {
@@ -54,7 +53,7 @@ export const apiServerSubmitForm = async (url: string, method: 'POST', body?: an
     ...newBody
   });
   if (res.status !== 200) {
-    console.log(res)
+    // console.log(await res.json())
     throw new Error('Backend error');
   }
   return await res.json();

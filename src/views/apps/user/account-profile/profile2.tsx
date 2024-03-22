@@ -33,8 +33,10 @@ import { CreateArtWork } from '../../../../../package/api/Art/CreateArtWork';
 import { GetCurrentUserResponse } from '../../../../../package/api/User/GetAllInfoAboutUser';
 import { useSearchParams } from 'next/navigation';
 import UserAddingBalanceList from 'views/apps/customer/user-adding-balance-list';
+import PaletteTwoToneIcon from '@mui/icons-material/PaletteTwoTone';
 import { TransactionHistory } from '../../../../../package/api/TransactionHistory/GetDepositeTransactionThisUser';
-
+import WorkHistoryTwoToneIcon from '@mui/icons-material/WorkHistoryTwoTone';
+import ProductList from 'views/apps/customer/product';
 // tabs
 function TabPanel({ children, value, index, ...other }: TabsProps) {
   return (
@@ -72,12 +74,26 @@ const tabsOption = [
     label: 'History',
     icon: <AccountBalanceWalletTwoToneIcon />,
     caption: 'Transaction History'
-  }
+  },
+  {
+    label: 'Art Work',
+    icon: <PaletteTwoToneIcon />,
+    caption: 'Transaction History'
+  },
+
 ];
 
 // ==============================|| PROFILE 2 ||============================== //
 
-const Profile2 = ({ user, transactionHistory }: { user: GetCurrentUserResponse; transactionHistory: TransactionHistory[] }) => {
+const Profile2 = ({
+  user,
+  transactionHistory,
+  accessToken
+}: {
+  accessToken: string;
+  user: GetCurrentUserResponse;
+  transactionHistory: TransactionHistory[];
+}) => {
   const { mode, borderRadius } = useConfig();
   const [value, setValue] = React.useState<number>(0);
   const searchParams = useSearchParams();
@@ -88,7 +104,12 @@ const Profile2 = ({ user, transactionHistory }: { user: GetCurrentUserResponse; 
     }
     const target = new URLSearchParams(searchParams).get('target');
     if (target) {
-      setValue(3);
+      if (target === 'history') {
+        setValue(3);
+      }
+      if (target === "balance") {
+        setValue(2)
+      }
     }
   }, [searchParams]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -181,7 +202,10 @@ const Profile2 = ({ user, transactionHistory }: { user: GetCurrentUserResponse; 
                   <Payment user={user} />
                 </TabPanel>
                 <TabPanel value={value} index={3}>
-                  <UserAddingBalanceList transactionHistory={transactionHistory}/>
+                  <UserAddingBalanceList transactionHistory={transactionHistory} />
+                </TabPanel>
+                <TabPanel value={value} index={4}>
+                  <ProductList accessToken={accessToken} />
                 </TabPanel>
               </CardContent>
             </Grid>

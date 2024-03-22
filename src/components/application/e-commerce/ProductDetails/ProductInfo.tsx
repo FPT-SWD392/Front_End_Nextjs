@@ -24,73 +24,79 @@ import { Products } from 'types/e-commerce';
 // assets
 import StarTwoToneIcon from '@mui/icons-material/StarTwoTone';
 import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone';
+import { ArtWork } from '../../../../../package/api/Art/GetCreatedArtList';
+import Avatar from '@mui/material/Avatar';
+import Chip from '@mui/material/Chip';
+import { defaultTags } from '../../../../../package/api/Art/config';
 
 // product color select
 
 // product size
-
-const validationSchema = yup.object({});
-
+const defaultAvatar = '/assets/images/users/user-round.png';
 // ==============================|| COLORS OPTION ||============================== //
 
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
-const ProductInfo = ({ product }: { product: Products }) => {
+const ProductInfo = ({ product }: { product: ArtWork }) => {
   const router = useRouter();
-
   const onClick = () => {
-    router.push('/user/checkout?productId=' + product.id);
+    router.push('/user/checkout?productId=' + product.artId);
   };
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
-          <Grid container spacing={1}>
-            <Grid item xs={12}>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography variant="h3">{product.name}</Typography>
-              </Stack>
-            </Grid>
-          </Grid>
-        </Stack>
+        <Typography variant="h3">{product.artName}</Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="body2">{product.description}</Typography>
+        {product.tags.map((e) => (
+          <Chip
+            size="small"
+            label={defaultTags[e + 1]}
+            color="primary"
+            sx={{
+              borderRadius: 1,
+              marginRight: 2
+            }}
+          />
+        ))}
       </Grid>
       <Grid item xs={12}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Rating
             name="simple-controlled"
-            value={product.rating}
+            value={product.averageRating}
             icon={<StarTwoToneIcon fontSize="inherit" />}
             emptyIcon={<StarBorderTwoToneIcon fontSize="inherit" />}
             precision={0.1}
             readOnly
           />
-          <Typography variant="caption">({product.salePrice}+)</Typography>
+          <Typography variant="caption">({product.ratingCount}+)</Typography>
         </Stack>
       </Grid>
+
       <Grid item xs={12}>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Typography variant="h2" color="primary">
-            ${product.offerPrice}
-          </Typography>
-        </Stack>
-      </Grid>
-      <Grid item xs={12}>
-        <Divider />
-      </Grid>
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Divider />
+        <Grid container spacing={2} alignItems="center">
+          <Grid item>
+            <Avatar alt="User 1" src={product.creatorProfilePicture || defaultAvatar} />
           </Grid>
-          <Grid item xs={12}>
-            <Button onClick={onClick} fullWidth color="secondary" variant="contained" size="large">
-              Buy Now
-            </Button>
+          <Grid item xs zeroMinWidth>
+            <Typography variant="subtitle1">{product.creatorNickName}</Typography>
           </Grid>
         </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography variant="body2">{product.description}</Typography>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Typography variant="h2" color="primary">
+          ${product.price}
+        </Typography>
+      </Grid>
+      <Grid item xs={6}>
+        <Button onClick={onClick} fullWidth color="secondary" variant="contained" size="large">
+          Buy Now
+        </Button>
       </Grid>
     </Grid>
   );

@@ -5,7 +5,7 @@ import { KeyedObject } from 'types';
 // ==============================|| TYPES - PRODUCT ||============================== //
 
 export interface ProductCardProps extends KeyedObject {
-  id?: string | number;
+  id: number;
   color?: string;
   name: string;
   image: string;
@@ -14,6 +14,9 @@ export interface ProductCardProps extends KeyedObject {
   salePrice?: number;
   rating?: number;
   href?: string;
+  disabledBuying: boolean;
+  createUserArt: string;
+  accessToken?: string;
 }
 
 export interface ProductStateProps {

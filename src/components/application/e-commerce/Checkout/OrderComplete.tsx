@@ -22,6 +22,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 // assets
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { useRouter } from 'next/navigation';
+import { hasRequestAnimationFrame } from 'swr/dist/_internal';
 
 const chance = new Chance();
 
@@ -29,7 +30,17 @@ const Transition = forwardRef((props: ZoomProps, ref) => <Zoom ref={ref} {...pro
 
 // ==============================|| CHECKOUT CART - DISCOUNT COUPON CODE ||============================== //
 
-const OrderComplete = ({ open, setOpen }: { open: boolean; setOpen: (value: boolean) => void }) => {
+const OrderComplete = ({
+  open,
+  setOpen,
+  message,
+  href = '/user/profile?target=history'
+}: {
+  open: boolean;
+  setOpen: (value: boolean) => void;
+  message?: string;
+  href?: string;
+}) => {
   const downMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
   const router = useRouter();
   return (
@@ -79,12 +90,12 @@ const OrderComplete = ({ open, setOpen }: { open: boolean; setOpen: (value: bool
                   <Grid item>
                     <Button
                       onClick={() => {
-                        router.push('/user/profile?target=history');
+                        router.push(href);
                       }}
                       variant="contained"
                       fullWidth
                     >
-                      View Your Order
+                      View your Order
                     </Button>
                   </Grid>
                 </Grid>

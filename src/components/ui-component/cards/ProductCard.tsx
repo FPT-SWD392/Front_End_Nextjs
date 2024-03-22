@@ -25,19 +25,27 @@ import Avatar from '@mui/material/Avatar';
 import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Image from 'next/image';
+import { GetArtUrl } from '../../../../package/api/Art/download';
 
 const User1 = '/assets/images/users/user-round.svg';
 // ==============================|| PRODUCT CARD ||============================== //
 
-const ProductCard = ({ id, color, name, image, description, offerPrice, salePrice, rating, href }: ProductCardProps) => {
+const ProductCard = ({ id, image, rating, href, disabledBuying, createUserArt, accessToken }: ProductCardProps) => {
   const [productRating] = useState<number | undefined>(rating);
+  const [url, setUrl] = useState('');
   const theme = useTheme();
 
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     setLoading(false);
   }, []);
-
+  const getUrlArt = async () => {
+    const url = await GetArtUrl({ id }, accessToken as string);
+    setUrl(url);
+  };
+  useEffect(() => {
+    getUrlArt();
+  }, [id]);
   return (
     <>
       {isLoading ? (
@@ -83,11 +91,15 @@ const ProductCard = ({ id, color, name, image, description, offerPrice, salePric
             <Button color="error" variant="contained" sx={{ ml: 20, borderRadius: 20 }}>
               Report
             </Button>
-            <Box flex={1} component={Link} href={href as string}></Box>
+            {disabledBuying ? (
+              <Box flex={1} component={Link} href={url as string} target="_blank"></Box>
+            ) : (
+              <Box flex={1} component={Link} href={href as string}></Box>
+            )}
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box display={'flex'} alignItems={'center'} bgcolor={'white'} p={0.5} borderRadius={10}>
                 <Avatar
-                  src={User1}
+                  src={createUserArt}
                   sx={{
                     ...theme.typography.mediumAvatar,
                     cursor: 'pointer',
@@ -99,11 +111,13 @@ const ProductCard = ({ id, color, name, image, description, offerPrice, salePric
                 />
                 <Rating precision={0.5} name="size-small" value={productRating} size="small" readOnly />
               </Box>
-              <Link href={'/user/checkout?productId=' + id}>
-                <IconButton sx={{ minWidth: 0 }} style={{ backgroundColor: 'white' }}>
-                  <ShoppingCartTwoToneIcon fontSize="small" />
-                </IconButton>
-              </Link>
+              {!disabledBuying && (
+                <Link href={`/user/checkout?productId=${id}`}>
+                  <IconButton sx={{ minWidth: 0 }} style={{ backgroundColor: 'white' }}>
+                    <ShoppingCartTwoToneIcon fontSize="small" />
+                  </IconButton>
+                </Link>
+              )}
             </Stack>
           </CardContent>
         </MainCard>

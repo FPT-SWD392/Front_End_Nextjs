@@ -27,19 +27,45 @@ import { gridSpacing } from 'store/constant';
 // assets
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { Products as Product } from 'types/e-commerce';
+import { ArtWork } from '../../../../../package/api/Art/GetArtInfo';
+import { formatNumber } from '../../../../../package/util';
+import { GetCurrentUserResponse } from '../../../../../package/api/User/GetAllInfoAboutUser';
+import OrderSummary2 from './OrderSummary2';
+import OrderComplete from './OrderComplete';
+import { useState } from 'react';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { apiClientFetch } from '../../../../../package/api/api-fetch';
+import { enqueueSnackbar } from 'notistack';
 const prodImage = '/assets/images/e-commerce';
-
 
 // ==============================|| CART - INCREMENT QUANTITY ||============================== //
 
 // ==============================|| CART - MAIN ||============================== //
 
 interface CartProps {
-  product: Product;
-  onNext: () => void;
+  product: ArtWork;
+  user: GetCurrentUserResponse;
 }
 
-const Cart = ({ product, onNext }: CartProps) => {
+const Cart = ({ product, user }: CartProps) => {
+  const handleClick = async () => {
+    try {
+      setIsLoading(true);
+      const data = await apiClientFetch('purchase', 'user', { artId: product.artId });
+      if (data.error) {
+        throw new Error('Giao dịch thất bại');
+      }
+      setOpen(true);
+    } catch (error) {
+      enqueueSnackbar('Giao dịch thất bại', {
+        variant: 'error'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   return (
     <Grid container spacing={gridSpacing}>
       <Grid item xs={12}>
@@ -62,39 +88,35 @@ const Cart = ({ product, onNext }: CartProps) => {
                 <TableCell component="th" scope="row">
                   <Grid container alignItems="center" spacing={2}>
                     <Grid item>
-                      <Avatar size="md" alt="product images" variant="rounded" src={product.image ? `${prodImage}/${product.image}` : ''} />
+                      <Avatar
+                        size="md"
+                        alt="product images"
+                        variant="rounded"
+                        src={`https://projectswd392.azurewebsites.net/api/Art/Preview?artId=${product.artId}`}
+                      />
                     </Grid>
                     <Grid item>
                       <Stack spacing={0}>
-                        <Typography variant="subtitle1">{product.name}</Typography>
+                        <Typography variant="subtitle1">{product.artName}</Typography>
                       </Stack>
                     </Grid>
                   </Grid>
                 </TableCell>
                 <TableCell align="right">
-                  <Stack>
-                    {product.offerPrice && <Typography variant="subtitle1">{currency(product.offerPrice).format()}</Typography>}
-                    {product.salePrice && (
-                      <Typography variant="caption" sx={{ textDecoration: 'line-through' }}>
-                        {currency(product.salePrice).format()}
-                      </Typography>
-                    )}
-                  </Stack>
+                  <Stack>{product.price && <Typography variant="subtitle1">{formatNumber(product.price)}đ</Typography>}</Stack>
                 </TableCell>
 
                 <TableCell align="right">
-                  {product.offerPrice && <Typography variant="subtitle1">{currency(product.offerPrice).format()}</Typography>}
+                  {product.price && <Typography variant="subtitle1">{formatNumber(product.price)}đ</Typography>}
                 </TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </TableContainer>
       </Grid>
-      <Grid item xs={8}>
-
-      </Grid>
+      <Grid item xs={8}></Grid>
       <Grid item xs={12}>
-        <OrderSummary product={product} />
+        <OrderSummary2 current={user.balance} order={product.price} />
       </Grid>
       <Grid item xs={12}>
         <Grid container direction={{ xs: 'column-reverse', lg: 'row' }} spacing={3} alignItems={{ xs: 'flex-start', lg: 'center' }}>
@@ -105,13 +127,22 @@ const Cart = ({ product, onNext }: CartProps) => {
           </Grid>
           <Grid item xs={12} md={5} lg={4}>
             <Stack spacing={gridSpacing}>
-              <Button variant="contained" fullWidth onClick={onNext}>
-                Check Out
-              </Button>
+              {user.balance - product.price > 0 ? (
+                <LoadingButton variant="contained" fullWidth onClick={handleClick} loading={isLoading}>
+                  Check Out
+                </LoadingButton>
+              ) : (
+                <Link href={'/user/profile?target=balance'}>
+                  <Button variant="contained" fullWidth onClick={() => {}}>
+                    Add Balance
+                  </Button>
+                </Link>
+              )}
             </Stack>
           </Grid>
         </Grid>
       </Grid>
+      <OrderComplete open={open} setOpen={setOpen} href="/user/profile" />
     </Grid>
   );
 };
