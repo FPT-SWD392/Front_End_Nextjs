@@ -30,7 +30,7 @@ import { GetArtUrl } from '../../../../package/api/Art/download';
 const User1 = '/assets/images/users/user-round.svg';
 // ==============================|| PRODUCT CARD ||============================== //
 
-const ProductCard = ({ id, image, rating, href, disabledBuying, createUserArt, accessToken }: ProductCardProps) => {
+const ProductCard = ({ id, image, rating, href, disabledBuying, createUserArt, accessToken, isLogged = false }: ProductCardProps) => {
   const [productRating] = useState<number | undefined>(rating);
   const [url, setUrl] = useState('');
   const theme = useTheme();
@@ -111,7 +111,7 @@ const ProductCard = ({ id, image, rating, href, disabledBuying, createUserArt, a
                 />
                 <Rating precision={0.5} name="size-small" value={productRating} size="small" readOnly />
               </Box>
-              {!disabledBuying && (
+              {!disabledBuying && isLogged && (
                 <Link href={`/user/checkout?productId=${id}`}>
                   <IconButton sx={{ minWidth: 0 }} style={{ backgroundColor: 'white' }}>
                     <ShoppingCartTwoToneIcon fontSize="small" />

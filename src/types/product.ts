@@ -14,6 +14,7 @@ export interface ProductCardProps extends KeyedObject {
   salePrice?: number;
   rating?: number;
   href?: string;
+  isLogged?: boolean;
   disabledBuying: boolean;
   createUserArt: string;
   accessToken?: string;

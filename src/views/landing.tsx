@@ -14,7 +14,8 @@ const Landing = ({ artList, isLogged }: { artList: ArtWork[]; isLogged: boolean 
       {artList.map((product: ArtWork, index) => (
         <Grid key={index} item xs={2.4}>
           <ProductCard
-            disabledBuying={isLogged}
+            disabledBuying={false}
+            isLogged={isLogged}
             href={`/user/product/product-details/${product.artId}`}
             id={product.artId}
             createUserArt={product.creatorProfilePicture}
