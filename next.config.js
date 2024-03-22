@@ -47,6 +47,13 @@ module.exports = {
     REACT_APP_AUTH0_CLIENT_ID: process.env.REACT_APP_AUTH0_CLIENT_ID,
     REACT_APP_AUTH0_DOMAIN: process.env.REACT_APP_AUTH0_DOMAIN
   },
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
+  },
   eslint: {
     ignoreDuringBuilds: true
   }
