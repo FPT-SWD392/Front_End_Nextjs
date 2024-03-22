@@ -154,10 +154,16 @@ const ProductAdd = ({ open, handleCloseDialog, accessToken }: ProductAddProps) =
     try {
       setIsLoading(true);
       const data = await CreateArtWork({ description, name, price, tags: tag }, e, accessToken);
+      if (data.error) {
+        throw new Error('Taọ thất bại');
+      }
       enqueueSnackbar('Tạo thành công', {
         variant: 'success'
       });
     } catch (error) {
+      enqueueSnackbar('Tạo thất bại', {
+        variant: 'error'
+      });
     } finally {
       router.refresh();
       handleCloseDialog();
@@ -210,7 +216,6 @@ const ProductAdd = ({ open, handleCloseDialog, accessToken }: ProductAddProps) =
               onChange={(e) => {
                 setPrice(+e.target.value);
               }}
-              InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
             />
             <Grid container spacing={0}>
               <Grid item xs={12}>
@@ -247,51 +252,49 @@ const ProductAdd = ({ open, handleCloseDialog, accessToken }: ProductAddProps) =
 
         <Grid item xs={7}>
           <Grid container spacing={1}>
-            {imageURL === '' ? (
-              <Grid item xs={12}>
-                <TextField
-                  type="file"
-                  onChange={handleFileChange}
-                  id="file-upload"
-                  fullWidth
-                  label="Enter SKU"
-                  name="ImageFile"
-                  sx={{ display: 'none' }}
-                />
-                <InputLabel
-                  htmlFor="file-upload"
-                  sx={{
-                    bgcolor: 'background.default',
-                    py: 3.75,
-                    px: 0,
-                    textAlign: 'center',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    mb: 3,
-                    '& > svg': {
-                      verticalAlign: 'sub',
-                      mr: 0.5
-                    }
-                  }}
-                >
-                  <CloudUploadIcon /> Drop file here to upload
-                </InputLabel>
-              </Grid>
-            ) : (
-              <Grid item xs={12}>
-              <CardMedia
-                image={imageURL}
-                alt=""
-                component={'img'}
-                sx={{
-                  width: '100%',
-                  height: 320,
-                  objectFit: 'cover'
-                }}
+            <Grid item xs={12}>
+              <TextField
+                type="file"
+                onChange={handleFileChange}
+                id="file-upload"
+                fullWidth
+                label="Enter SKU"
+                name="ImageFile"
+                sx={{ display: 'none' }}
               />
+              <InputLabel
+                htmlFor="file-upload"
+                sx={{
+                  bgcolor: 'background.default',
+                  py: 3.75,
+                  px: 0,
+                  textAlign: 'center',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  mb: 3,
+                  '& > svg': {
+                    verticalAlign: 'sub',
+                    mr: 0.5
+                  }
+                }}
+              >
+                <CloudUploadIcon /> Drop file here to upload
+              </InputLabel>
             </Grid>
+            {imageURL !== '' && (
+              <Grid item xs={12}>
+                <CardMedia
+                  image={imageURL}
+                  alt=""
+                  component={'img'}
+                  sx={{
+                    width: '100%',
+                    height: 320,
+                    objectFit: 'cover'
+                  }}
+                />
+              </Grid>
             )}
- 
           </Grid>
         </Grid>
         <Grid item xs={12} sx={{ flexDirection: 'row', display: 'flex' }}>

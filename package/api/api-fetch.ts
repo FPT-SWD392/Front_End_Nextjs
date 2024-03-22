@@ -52,7 +52,7 @@ export const apiServerSubmitForm = async (url: string, method: 'POST', body?: an
     ...newBody
   });
   if (res.status !== 200) {
-    // console.log(await res.json())
+    console.log(res)
     throw new Error('Backend error');
   }
   return await res.json();

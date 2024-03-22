@@ -80,9 +80,9 @@ const tabsOption = [
     caption: 'Transaction History'
   },
   {
-    label: 'Art Work',
+    label: 'Create',
     icon: <PaletteTwoToneIcon />,
-    caption: 'Transaction History'
+    caption: 'Create Art'
   }
 ];
 

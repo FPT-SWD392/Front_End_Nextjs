@@ -90,7 +90,7 @@ const ProductInfo = ({ product }: { product: ArtWork }) => {
 
       <Grid item xs={12}>
         <Typography variant="h2" color="primary">
-          ${product.price}
+          {product.price} VND
         </Typography>
       </Grid>
       <Grid item xs={6}>

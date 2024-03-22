@@ -21,9 +21,12 @@ export const UpdateCreator = async (params: UpdateCreatorRequest, accessToken: s
     if (res.status !== 200) {
       throw new Error('');
     }
-
-    return await res.json();
+    let data: any = {};
+    try {
+      data = await res.json();
+    } catch (error) {}
+    return data;
   } catch (error: any) {
-    return errorSystem('LỖi không thể tạo yêu cầu', {});
+    return errorSystem('Lỗi không thể tạo yêu cầu', {});
   }
 };
