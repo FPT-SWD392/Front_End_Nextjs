@@ -131,5 +131,8 @@
     "sass": "^1.71.1",
     "typescript": "^5.3.3"
   },
-  "packageManager": "yarn@4.1.0"
+  "packageManager": "yarn@4.1.0",
+  "engines": {
+    "node": ">=18.12.0"
+ }
 }
