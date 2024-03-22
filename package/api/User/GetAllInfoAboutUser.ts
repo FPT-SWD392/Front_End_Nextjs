@@ -8,6 +8,8 @@ export interface GetCurrentUserResponse {
   status: number;
   creatorId: string;
   fullName: string;
+  bio: string;
+  contactInfo: string;
   location: string;
   phoneNumber: string;
   profilePicture: string;

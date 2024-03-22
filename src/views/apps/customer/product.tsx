@@ -99,8 +99,7 @@ const headCells: HeadCell[] = [
     numeric: true,
     label: 'Date',
     align: 'left'
-  },
-  
+  }
 ];
 
 // ==============================|| TABLE HEADER TOOLBAR ||============================== //
@@ -183,7 +182,7 @@ function EnhancedTableHead({
 
 // ==============================|| PRODUCT LIST ||============================== //
 
-const ProductList = ({accessToken} : {accessToken: string}) => {
+const ProductList = ({ accessToken }: { accessToken: string }) => {
   // show a right sidebar when clicked on new product
   const [open, setOpen] = React.useState(false);
   const handleClickOpenDialog = () => {
@@ -288,122 +287,8 @@ const ProductList = ({accessToken} : {accessToken: string}) => {
 
   return (
     <MainCard content={false}>
-      <CardContent>
-        <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                )
-              }}
-              onChange={handleSearch}
-              placeholder="Search Product"
-              value={search}
-              size="small"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
- 
-            {/* product add & dialog */}
-            <Tooltip title="Add Product">
-              <Fab
-                color="primary"
-                size="small"
-                onClick={handleClickOpenDialog}
-                sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}
-              >
-                <AddIcon fontSize="small" />
-              </Fab>
-            </Tooltip>
-            <ProductAdd open={open} handleCloseDialog={handleCloseDialog} accessToken={accessToken}/>
-          </Grid>
-        </Grid>
-      </CardContent>
-
-      {/* table */}
-      <TableContainer>
-        <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-          <EnhancedTableHead
-            numSelected={selected.length}
-            order={order}
-            orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
-            rowCount={rows.length}
-            selected={selected}
-          />
-          <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
-              .map((row, index) => {
-                /** Make sure no display bugs if row isn't an OrderData object */
-                if (typeof row === 'number') return null;
-                const isItemSelected = isSelected(row.name);
-                const labelId = `enhanced-table-checkbox-${index}`;
-
-                return (
-                  <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                    <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      onClick={(event) => handleClick(event, row.name)}
-                      sx={{ cursor: 'pointer' }}
-                    >
-                      <Typography variant="subtitle1"> #{row.id} </Typography>
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      onClick={(event) => handleClick(event, row.name)}
-                      sx={{ cursor: 'pointer' }}
-                    >
-                      <Typography variant="subtitle1"> {row.name} </Typography>
-                    </TableCell>
-                    <TableCell>{row.category}</TableCell>
-                    <TableCell align="right">{row.price}$</TableCell>
-                    <TableCell align="center">{row.date}</TableCell>
-                    <TableCell align="right">{row.qty}</TableCell>
-                    <TableCell align="center" sx={{ pr: 3 }}>
-                      <IconButton size="large" aria-label="more options">
-                        <MoreHorizOutlinedIcon sx={{ fontSize: '1.3rem' }} />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            {emptyRows > 0 && (
-              <TableRow sx={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* table pagination */}
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      <Typography variant="subtitle1">Add new Image</Typography>
+      <ProductAdd open={open} handleCloseDialog={handleCloseDialog} accessToken={accessToken} />
     </MainCard>
   );
 };

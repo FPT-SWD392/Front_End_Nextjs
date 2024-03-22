@@ -35,11 +35,9 @@ import { CreateArtWork } from '../../../../../package/api/Art/CreateArtWork';
 import { useRouter } from 'next/navigation';
 import { defaultTags } from '../../../../../package/api/Art/config';
 import { enqueueSnackbar } from 'notistack';
-
-const Product1 = '/assets/images/widget/prod1.jpg';
-const Product2 = '/assets/images/widget/prod2.jpg';
-const Product3 = '/assets/images/widget/prod3.jpg';
-const Product4 = '/assets/images/widget/prod4.jpg';
+import Stack from '@mui/material/Stack';
+import Image from 'next/image';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
@@ -150,9 +148,11 @@ const ProductAdd = ({ open, handleCloseDialog, accessToken }: ProductAddProps) =
   const [description, setDescription] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const data = await CreateArtWork({ description, name, price, tags: tag }, e, accessToken);
       enqueueSnackbar('Tạo thành công', {
         variant: 'success'
@@ -160,129 +160,149 @@ const ProductAdd = ({ open, handleCloseDialog, accessToken }: ProductAddProps) =
     } catch (error) {
     } finally {
       router.refresh();
-      handleCloseDialog()
+      handleCloseDialog();
+      setIsLoading(false);
+    }
+  };
+
+  const [imageURL, setImageURL] = useState<string>('');
+
+  const handleFileChange = (event: any) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageURL(reader.result as any);
+      };
+      reader.readAsDataURL(file);
     }
   };
   return (
-    <Dialog open={open} TransitionComponent={Transition} keepMounted onClose={handleCloseDialog}>
-      {open && (
-        <form onSubmit={handleFormSubmit}>
-          <DialogTitle>Add Product</DialogTitle>
-          <DialogContent>
-            <Grid container spacing={gridSpacing} sx={{ mt: 0.25 }}>
+    <form onSubmit={handleFormSubmit}>
+      <Grid container spacing={gridSpacing} margin="auto">
+        <Grid item xs={5}>
+          <Stack spacing={gridSpacing}>
+            <TextField
+              id="outlined-basic1"
+              fullWidth
+              value={name}
+              label="Enter Product Name*"
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+            />
+            <TextField
+              id="outlined-basic2"
+              fullWidth
+              multiline
+              rows={3}
+              value={description}
+              onChange={(e) => {
+                setDescription(e.target.value);
+              }}
+              label="Enter Description"
+            />
+            <TextField
+              label="Price*"
+              value={price}
+              type="number"
+              id="filled-start-adornment1"
+              onChange={(e) => {
+                setPrice(+e.target.value);
+              }}
+              InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
+            />
+            <Grid container spacing={0}>
               <Grid item xs={12}>
-                <TextField
-                  id="outlined-basic1"
-                  fullWidth
-                  value={name}
-                  label="Enter Product Name*"
-                  onChange={(e) => {
-                    setName(e.target.value);
-                  }}
-                />
+                <Typography variant="subtitle1">Tags</Typography>
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  id="outlined-basic2"
-                  fullWidth
-                  multiline
-                  rows={3}
-                  value={description}
-                  onChange={(e) => {
-                    setDescription(e.target.value);
-                  }}
-                  label="Enter Description"
-                />
-              </Grid>
-
-              <Grid item md={6} xs={12}>
-                <TextField
-                  label="Price*"
-                  value={price}
-                  type="number"
-                  id="filled-start-adornment1"
-                  onChange={(e) => {
-                    setPrice(+e.target.value);
-                  }}
-                  InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Grid container spacing={1}>
-                  <Grid item xs={12}>
-                    <Typography variant="subtitle1">Product Images*</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField type="file" id="file-upload" fullWidth label="Enter SKU" name="ImageFile" sx={{ display: 'none' }} />
-                    <InputLabel
-                      htmlFor="file-upload"
-                      sx={{
-                        bgcolor: 'background.default',
-                        py: 3.75,
-                        px: 0,
-                        textAlign: 'center',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        mb: 3,
-                        '& > svg': {
-                          verticalAlign: 'sub',
-                          mr: 0.5
-                        }
-                      }}
-                    >
-                      <CloudUploadIcon /> Drop file here to upload
-                    </InputLabel>
-                    <Grid container spacing={1}></Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={12}>
-                <Grid container spacing={1}>
-                  <Grid item xs={12}>
-                    <Typography variant="subtitle1">Tags</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <div>
-                      <Select
-                        id="demo-multiple-chip"
-                        multiple
-                        fullWidth
-                        value={tag}
-                        onChange={handleTagSelectChange}
-                        input={<Input id="select-multiple-chip" />}
-                        renderValue={(selected) => (
-                          <div>
-                            {typeof selected !== 'string' &&
-                              selected.map((value) => <Chip key={value} label={defaultTags[+value - 1]} sx={{ ml: 0.5 }} />)}
-                          </div>
-                        )}
-                        MenuProps={MenuProps}
-                      >
-                        {defaultTags.map((name, index) => (
-                          <MenuItem key={name} value={index + 1 + ''} sx={getStyles(name, tag.toString(), theme)}>
-                            {name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </div>
-                  </Grid>
-                </Grid>
+                <div>
+                  <Select
+                    id="demo-multiple-chip"
+                    multiple
+                    fullWidth
+                    value={tag}
+                    onChange={handleTagSelectChange}
+                    input={<Input id="select-multiple-chip" />}
+                    renderValue={(selected) => (
+                      <div>
+                        {typeof selected !== 'string' &&
+                          selected.map((value) => <Chip key={value} label={defaultTags[+value - 1]} sx={{ ml: 0.5 }} />)}
+                      </div>
+                    )}
+                    MenuProps={MenuProps}
+                  >
+                    {defaultTags.map((name, index) => (
+                      <MenuItem key={name} value={index + 1 + ''} sx={getStyles(name, tag.toString(), theme)}>
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </div>
               </Grid>
             </Grid>
-          </DialogContent>
-          <DialogActions>
-            <AnimateButton>
-              <Button variant="contained" type="submit">
-                Create
-              </Button>
-            </AnimateButton>
-            <Button variant="text" color="error" onClick={handleCloseDialog}>
-              Close
-            </Button>
-          </DialogActions>
-        </form>
-      )}
-    </Dialog>
+          </Stack>
+        </Grid>
+
+        <Grid item xs={7}>
+          <Grid container spacing={1}>
+            {imageURL === '' ? (
+              <Grid item xs={12}>
+                <TextField
+                  type="file"
+                  onChange={handleFileChange}
+                  id="file-upload"
+                  fullWidth
+                  label="Enter SKU"
+                  name="ImageFile"
+                  sx={{ display: 'none' }}
+                />
+                <InputLabel
+                  htmlFor="file-upload"
+                  sx={{
+                    bgcolor: 'background.default',
+                    py: 3.75,
+                    px: 0,
+                    textAlign: 'center',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    mb: 3,
+                    '& > svg': {
+                      verticalAlign: 'sub',
+                      mr: 0.5
+                    }
+                  }}
+                >
+                  <CloudUploadIcon /> Drop file here to upload
+                </InputLabel>
+              </Grid>
+            ) : (
+              <Grid item xs={12}>
+              <CardMedia
+                image={imageURL}
+                alt=""
+                component={'img'}
+                sx={{
+                  width: '100%',
+                  height: 320,
+                  objectFit: 'cover'
+                }}
+              />
+            </Grid>
+            )}
+ 
+          </Grid>
+        </Grid>
+        <Grid item xs={12} sx={{ flexDirection: 'row', display: 'flex' }}>
+          <AnimateButton>
+            <LoadingButton variant="outlined" type="submit" loading={isLoading}>
+              Create Image
+            </LoadingButton>
+          </AnimateButton>
+        </Grid>
+      </Grid>
+    </form>
   );
 };
 

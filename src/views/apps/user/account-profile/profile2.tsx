@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // material-ui
 import Button from '@mui/material/Button';
@@ -37,6 +37,10 @@ import PaletteTwoToneIcon from '@mui/icons-material/PaletteTwoTone';
 import { TransactionHistory } from '../../../../../package/api/TransactionHistory/GetDepositeTransactionThisUser';
 import WorkHistoryTwoToneIcon from '@mui/icons-material/WorkHistoryTwoTone';
 import ProductList from 'views/apps/customer/product';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import { UpdateCreator } from '../../../../../package/api/User/UpdateCreator';
+import { enqueueSnackbar } from 'notistack';
 // tabs
 function TabPanel({ children, value, index, ...other }: TabsProps) {
   return (
@@ -79,8 +83,7 @@ const tabsOption = [
     label: 'Art Work',
     icon: <PaletteTwoToneIcon />,
     caption: 'Transaction History'
-  },
-
+  }
 ];
 
 // ==============================|| PROFILE 2 ||============================== //
@@ -107,15 +110,33 @@ const Profile2 = ({
       if (target === 'history') {
         setValue(3);
       }
-      if (target === "balance") {
-        setValue(2)
+      if (target === 'balance') {
+        setValue(2);
       }
     }
   }, [searchParams]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-
+  const [isLoading, setIsLoading] = useState(false);
+  const handleSendRequestArtist = async () => {
+    try {
+      setIsLoading(true);
+      const data = await UpdateCreator({ bio: '1', contactInfo: '2' }, accessToken);
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      enqueueSnackbar('Gửi yêu cầu thành công', {
+        variant: 'success'
+      });
+    } catch (error: any) {
+      enqueueSnackbar(error.message, {
+        variant: 'error'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <Grid container spacing={gridSpacing}>
       <Grid item xs={12}>
@@ -205,7 +226,21 @@ const Profile2 = ({
                   <UserAddingBalanceList transactionHistory={transactionHistory} />
                 </TabPanel>
                 <TabPanel value={value} index={4}>
-                  <ProductList accessToken={accessToken} />
+                  {user.bio && user.contactInfo ? (
+                    <ProductList accessToken={accessToken} />
+                  ) : (
+                    <Box height={'300px'} display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
+                      <Typography variant="h3" mb={3}>
+                        You are not an Artist
+                      </Typography>
+                      <Typography variant="h5" mb={3}>
+                        For upgrade to Artist, your balance must be more than 100,000đ
+                      </Typography>
+                      <Button variant="contained" disabled={user.balance < 100000} onClick={handleSendRequestArtist}>
+                        Send request to be an Artist
+                      </Button>
+                    </Box>
+                  )}
                 </TabPanel>
               </CardContent>
             </Grid>
