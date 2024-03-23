@@ -86,7 +86,7 @@ const Payment = ({ user }: PaymentProps) => {
       if (money < 10000) {
         throw new Error('Số tiền nạp phải lớn hơn 10,000đ');
       }
-      router.push(createPaymentUrl(money, `http://localhost:3000` + pathname));
+      router.push(createPaymentUrl(money, `https://spiffy-zabaione-eb3369.netlify.app` + pathname));
     } catch (error: any) {
       enqueueSnackbar(error.message, {
         variant: 'error'
